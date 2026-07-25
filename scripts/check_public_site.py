@@ -130,6 +130,29 @@ def main() -> int:
             failures.append(
                 f"no preserved MathJax delimiters found in {note_page.relative_to(site_root)}"
             )
+        if re.search(r"\|(?:\s*:?-{3,}:?\s*\|){2,}", note_html):
+            failures.append(
+                f"unrendered Markdown table found in "
+                f"{note_page.relative_to(site_root)}"
+            )
+        if re.search(r"\\\\(?=[A-Za-z0-9-])", note_html):
+            failures.append(
+                f"ambiguous TeX row break found in "
+                f"{note_page.relative_to(site_root)}"
+            )
+        for matrix in re.findall(
+            r"\\begin\{(?:bmatrix|pmatrix|matrix)\}"
+            r"(.*?)"
+            r"\\end\{(?:bmatrix|pmatrix|matrix)\}",
+            note_html,
+            re.DOTALL,
+        ):
+            if re.search(r"(?<!\\)\\\s+[A-Za-z0-9-]", matrix):
+                failures.append(
+                    f"collapsed TeX matrix row break found in "
+                    f"{note_page.relative_to(site_root)}"
+                )
+                break
 
     if failures:
         print("\n".join(failures), file=sys.stderr)

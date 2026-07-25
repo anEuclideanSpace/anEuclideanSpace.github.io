@@ -269,17 +269,18 @@ This local-to-global passage is the load-bearing distinction: choosing a sensibl
 > [!example]- What does \\(x+h e_i\\) actually change?
 > In \\(\mathbb R^3\\), take
 > \\[
-> x=\begin{bmatrix}2\\-1\\5\end{bmatrix},
+> x=\begin{bmatrix}2\\\\ -1\\\\ 5\end{bmatrix},
 > \qquad
-> e_2=\begin{bmatrix}0\\1\\0\end{bmatrix}.
+> e_2=\begin{bmatrix}0\\\\ 1\\\\ 0\end{bmatrix}.
 > \\]
 > Then
 > \\[
-> x+h e_2=\begin{bmatrix}2\\-1+h\\5\end{bmatrix}:
+> x+h e_2=\begin{bmatrix}2\\\\ -1+h\\\\ 5\end{bmatrix}:
 > \\]
 > only the second coordinate moves. Computing \\(\partial f/\partial x_2\\) means differentiating \\(f\\) along precisely this line through \\(x\\).
 
 > [!note]- Type check
+>
 > | Object | Type | Role |
 > |---|---|---|
 > | \\(h\\) | scalar | displacement along one coordinate |
@@ -387,7 +388,7 @@ At this stage, \\(\nabla f(x)\\) is only a vector of slopes measured along the c
 > f(1,2)=7,
 > \qquad
 > \nabla f(1,2)
-> =\begin{bmatrix}8\\3\end{bmatrix}.
+> =\begin{bmatrix}8\\\\ 3\end{bmatrix}.
 > \\]
 > Thus the instantaneous coordinate slopes at this point are \\(8\\) along the \\(x_1\\) axis and \\(3\\) along the \\(x_2\\) axis.
 
@@ -404,7 +405,7 @@ At this stage, \\(\nabla f(x)\\) is only a vector of slopes measured along the c
 > [!example]- Verify a directional derivative from its definition
 > Use the diagonal unit vector
 > \\[
-> u=\frac1{\sqrt2}\begin{bmatrix}1\\1\end{bmatrix},
+> u=\frac1{\sqrt2}\begin{bmatrix}1\\\\ 1\end{bmatrix},
 > \qquad
 > \|u\|=1.
 > \\]
@@ -433,7 +434,7 @@ At this stage, \\(\nabla f(x)\\) is only a vector of slopes measured along the c
 > \\[
 > \nabla f(1,2)^\top u
 > =\begin{bmatrix}8&3\end{bmatrix}
-> \frac1{\sqrt2}\begin{bmatrix}1\\1\end{bmatrix}
+> \frac1{\sqrt2}\begin{bmatrix}1\\\\ 1\end{bmatrix}
 > =\frac{11}{\sqrt2}.
 > \\]
 > The axis check is recovered as well: for \\(e_1=(1,0)^\top\\), both the definition and \\(\nabla f(1,2)^\top e_1\\) give \\(8\\).
@@ -442,6 +443,7 @@ At this stage, \\(\nabla f(x)\\) is only a vector of slopes measured along the c
 > The limit calculation did **not** assume \\(D_u f(x)=\nabla f(x)^\top u\\); it independently produced the same number in one example. This is evidence and a sanity check, not a proof of the general identity. Sections §1.2–§1.3 establish the identity for every direction when \\(f\\) is differentiable.
 
 > [!summary] Coordinate slopes, the gradient, and a directional slope
+>
 > | Object | Type | Question answered |
 > |---|---|---|
 > | \\(\partial f/\partial x_i\\) | scalar | What is the slope along coordinate axis \\(e_i\\)? |
@@ -464,6 +466,7 @@ At this stage, \\(\nabla f(x)\\) is only a vector of slopes measured along the c
 > The larger number does not describe a steeper geometric direction: \\(v\\) and \\(u\\) lie on the same ray, but \\(v\\) is longer. Fixing \\(\|u\|=1\\) removes this arbitrary scaling and makes directional slopes comparable. Section §1.3 develops this point, and §1.5 shows why the chosen norm determines what “steepest” means.
 
 > [!summary] Three ways to obtain derivatives
+>
 > | Method | Operates on | Produces | Primary use |
 > |---|---|---|---|
 > | symbolic differentiation | a mathematical expression | another expression for the derivative | algebra and analytic derivations |
@@ -476,7 +479,7 @@ At this stage, \\(\nabla f(x)\\) is only a vector of slopes measured along the c
 f(x_1,x_2)=x_1^2+3x_1x_2
 \quad\longmapsto\quad
 \nabla f(x_1,x_2)=
-\begin{bmatrix}2x_1+3x_2\\3x_1\end{bmatrix}.
+\begin{bmatrix}2x_1+3x_2\\\\ 3x_1\end{bmatrix}.
 \\]
 
 It returns a reusable expression, but large programs need not admit a compact symbolic form and may suffer from expression swell.

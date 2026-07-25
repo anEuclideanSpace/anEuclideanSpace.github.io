@@ -111,8 +111,40 @@ def remove_first_h1(body: str) -> str:
     return re.sub(r"^\s*#\s+.+?\n+", "", body, count=1)
 
 
+def normalize_callout_tables(body: str) -> str:
+    """Give blockquoted tables the blank line Kramdown requires."""
+    lines = body.splitlines()
+    normalized: list[str] = []
+    separator = re.compile(
+        r"^>\s*\|\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$"
+    )
+
+    for index, line in enumerate(lines):
+        starts_table = (
+            line.startswith("> |")
+            and index + 1 < len(lines)
+            and separator.match(lines[index + 1])
+        )
+        if starts_table and (not normalized or normalized[-1].strip() != ">"):
+            normalized.append(">")
+        normalized.append(line)
+
+    suffix = "\n" if body.endswith("\n") else ""
+    return "\n".join(normalized) + suffix
+
+
+def normalize_tex_row_breaks(body: str) -> str:
+    """Disambiguate TeX row breaks immediately followed by content."""
+    return re.sub(
+        r"\\\\(?=[A-Za-z0-9-])",
+        lambda _: r"\\\\ ",
+        body,
+    )
+
+
 def preserve_math_delimiters(body: str) -> str:
     """Keep TeX delimiters intact through Kramdown's backslash handling."""
+    body = normalize_tex_row_breaks(body)
     display_parts = body.split("$$")
     if (len(display_parts) - 1) % 2:
         raise ValueError("Unbalanced $$ display-math delimiters")
@@ -268,6 +300,7 @@ def main() -> int:
             replace_wikilink,
             body,
         )
+        body = normalize_callout_tables(body)
         body = preserve_math_delimiters(body)
 
         tags = metadata.get("tags", [])

@@ -230,7 +230,7 @@ At the base point,
 \\[
 f(x)=3,
 \qquad
-\nabla f(x)=\begin{bmatrix}2\\4\end{bmatrix}.
+\nabla f(x)=\begin{bmatrix}2\\\\ 4\end{bmatrix}.
 \\]
 
 Writing a nearby point as \\(y=x+\delta\\), the affine first-order model is the tangent plane
@@ -249,7 +249,7 @@ It matches both value and first-order slope at the contact point:
 \\[
 T_x(x)=f(x)=3,
 \qquad
-\nabla T_x=\nabla f(x)=\begin{bmatrix}2\\4\end{bmatrix}.
+\nabla T_x=\nabla f(x)=\begin{bmatrix}2\\\\ 4\end{bmatrix}.
 \\]
 
 ![tangent-plane-and-quadratic-remainder]({{ '/assets/notes/gradient-descent/tangent-plane-and-quadratic-remainder.png' | relative_url }})
@@ -331,7 +331,7 @@ This uniform estimate — not the single-path table — proves differentiability
 > [!note]- Hessian preview: curvature is the remainder
 > For this quadratic,
 > \\[
-> \nabla^2f=\begin{bmatrix}2&0\\0&4\end{bmatrix},
+> \nabla^2f=\begin{bmatrix}2&0\\\\ 0&4\end{bmatrix},
 > \\]
 > and the remainder is exactly
 > \\[
@@ -550,7 +550,7 @@ Thus “the gradient is perpendicular to the level set” means that it is perpe
 > \\]
 > and
 > \\[
-> \nabla f(x)=\begin{bmatrix}2\\4\end{bmatrix}.
+> \nabla f(x)=\begin{bmatrix}2\\\\ 4\end{bmatrix}.
 > \\]
 > A tangent vector \\(v=(v_1,v_2)^\top\\) must satisfy
 > \\[
@@ -560,7 +560,7 @@ Thus “the gradient is perpendicular to the level set” means that it is perpe
 > \\[
 > \nabla f(x)^\top v
 > =\begin{bmatrix}2&4\end{bmatrix}
-> \begin{bmatrix}2\\-1\end{bmatrix}
+> \begin{bmatrix}2\\\\ -1\end{bmatrix}
 > =0.
 > \\]
 

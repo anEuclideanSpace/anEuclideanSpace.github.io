@@ -21,7 +21,7 @@ This quadratic makes the constants \\(\mu\\), \\(L\\), and \\(\kappa\\) visible 
 f(x)
 =\frac12\big(x_1^2+10x_2^2\big)
 =\frac12x^\top
-\underbrace{\begin{pmatrix}1&0\\0&10\end{pmatrix}}_{A}
+\underbrace{\begin{pmatrix}1&0\\\\ 0&10\end{pmatrix}}_{A}
 x.
 \\]
 
