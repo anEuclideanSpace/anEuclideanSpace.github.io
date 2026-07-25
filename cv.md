@@ -1,10 +1,10 @@
 ---
 layout: default
 title: CV
+permalink: /cv/
 ---
 
 # CV
 
-This page is currently under construction.
-
-A public CV may be added later.
+A public CV is not currently posted. The [notes archive]({{ '/notes/' | relative_url }})
+is the best representation of ongoing work.

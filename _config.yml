@@ -1,3 +1,28 @@
-title: Personal Website
-description: A personal website under construction.
+title: an Euclidean space
+description: Public notes on mathematics, learning, and computation.
+url: https://aneuclideanspace.github.io
+baseurl: ""
 theme: jekyll-theme-cayman
+markdown: kramdown
+permalink: pretty
+timezone: America/Los_Angeles
+
+collections:
+  notes:
+    output: true
+    permalink: /notes/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: notes
+    values:
+      layout: note
+
+exclude:
+  - scripts
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - .bundle
