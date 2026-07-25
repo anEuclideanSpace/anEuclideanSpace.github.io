@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Publish durable Metis notes into the Jekyll site.
+"""Publish selected notes into the Jekyll site.
 
-The vault remains the source of truth. This script creates public copies,
-converts Obsidian links, and copies only assets referenced by published notes.
+This script creates public copies, converts wiki links, and copies only assets
+referenced by published notes.
 """
 
 from __future__ import annotations
@@ -111,23 +111,48 @@ def remove_first_h1(body: str) -> str:
     return re.sub(r"^\s*#\s+.+?\n+", "", body, count=1)
 
 
+def preserve_math_delimiters(body: str) -> str:
+    """Keep TeX delimiters intact through Kramdown's backslash handling."""
+    display_parts = body.split("$$")
+    if (len(display_parts) - 1) % 2:
+        raise ValueError("Unbalanced $$ display-math delimiters")
+
+    rebuilt: list[str] = []
+    for index, part in enumerate(display_parts):
+        rebuilt.append(part)
+        if index < len(display_parts) - 1:
+            rebuilt.append(r"\\[" if index % 2 == 0 else r"\\]")
+
+    protected = "".join(rebuilt)
+    protected = protected.replace(r"\(", r"\\(").replace(r"\)", r"\\)")
+    inline_parts = re.split(r"(?<!\\)\$", protected)
+    if (len(inline_parts) - 1) % 2:
+        raise ValueError("Unbalanced $ inline-math delimiters")
+
+    rebuilt = []
+    for index, part in enumerate(inline_parts):
+        rebuilt.append(part)
+        if index < len(inline_parts) - 1:
+            rebuilt.append(r"\\(" if index % 2 == 0 else r"\\)")
+
+    return "".join(rebuilt)
+
+
 def main() -> int:
-    if len(sys.argv) > 2:
-        print("usage: sync_metis_notes.py [METIS_VAULT]", file=sys.stderr)
+    if len(sys.argv) != 2:
+        print("usage: publish_notes.py SOURCE_DIRECTORY", file=sys.stderr)
         return 2
 
     script_path = Path(__file__).resolve()
     site_root = script_path.parent.parent
-    vault = Path(sys.argv[1]).expanduser().resolve() if len(sys.argv) == 2 else Path(
-        "/Users/euclid/Documents/proteus/metis/Metis"
-    )
+    source_root = Path(sys.argv[1]).expanduser().resolve()
 
-    if not vault.is_dir():
-        print(f"Metis vault not found: {vault}", file=sys.stderr)
+    if not source_root.is_dir():
+        print(f"Source directory not found: {source_root}", file=sys.stderr)
         return 1
 
     note_records: list[dict[str, object]] = []
-    for source in sorted(vault.glob("*.md")):
+    for source in sorted(source_root.glob("*.md")):
         text = source.read_text(encoding="utf-8")
         metadata, body = parse_frontmatter(text)
         if not metadata or not public_note(source, metadata):
@@ -181,8 +206,8 @@ def main() -> int:
     def replace_embed(match: re.Match[str]) -> str:
         target = match.group(1).strip()
         label = (match.group(2) or Path(target).stem).strip()
-        attachments_root = (vault / "attachments").resolve()
-        candidate = (vault / target).resolve()
+        attachments_root = (source_root / "attachments").resolve()
+        candidate = (source_root / target).resolve()
 
         if candidate.is_file() and candidate.is_relative_to(attachments_root):
             source_asset = candidate
@@ -243,6 +268,7 @@ def main() -> int:
             replace_wikilink,
             body,
         )
+        body = preserve_math_delimiters(body)
 
         tags = metadata.get("tags", [])
         if not isinstance(tags, list):

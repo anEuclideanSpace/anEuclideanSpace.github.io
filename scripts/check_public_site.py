@@ -6,6 +6,7 @@ from __future__ import annotations
 import sys
 from html.parser import HTMLParser
 from pathlib import Path
+import re
 from urllib.parse import unquote, urlparse
 
 
@@ -17,6 +18,11 @@ FORBIDDEN_TEXT = (
     "阅读与审校记录",
     "system prompt",
     "developer prompt",
+)
+
+MATH_OR_TEX_TOKEN = re.compile(
+    r"(?P<open>\\\(|\\\[)|(?P<close>\\\)|\\\])|"
+    r"(?P<command>\\(?:mathbb|nabla|exists|forall|boxed)\b)"
 )
 
 
@@ -53,6 +59,23 @@ def resolve_reference(site_root: Path, page: Path, reference: str) -> Path | Non
     if target.is_dir() or clean_path.endswith("/"):
         target = target / "index.html"
     return target.resolve()
+
+
+def unwrapped_tex_command(content: str) -> str | None:
+    closing_token: str | None = None
+
+    for match in MATH_OR_TEX_TOKEN.finditer(content):
+        token = match.group(0)
+        if match.group("open"):
+            if closing_token is None:
+                closing_token = r"\)" if token == r"\(" else r"\]"
+        elif match.group("close"):
+            if token == closing_token:
+                closing_token = None
+        elif closing_token is None:
+            return token
+
+    return None
 
 
 def main() -> int:
@@ -94,6 +117,19 @@ def main() -> int:
         failures.append("No note pages were generated")
     elif "mathjax@4/tex-mml-chtml.js" not in note_pages[0].read_text(encoding="utf-8"):
         failures.append("MathJax is not loaded on note pages")
+
+    for note_page in note_pages:
+        note_html = note_page.read_text(encoding="utf-8")
+        unwrapped_command = unwrapped_tex_command(note_html)
+        if unwrapped_command:
+            failures.append(
+                f"unwrapped TeX command {unwrapped_command!r} found in "
+                f"{note_page.relative_to(site_root)}"
+            )
+        if "\\(" not in note_html and "\\[" not in note_html:
+            failures.append(
+                f"no preserved MathJax delimiters found in {note_page.relative_to(site_root)}"
+            )
 
     if failures:
         print("\n".join(failures), file=sys.stderr)
