@@ -92,6 +92,8 @@ def main() -> int:
 
     if len(note_pages) == 0:
         failures.append("No note pages were generated")
+    elif "mathjax@4/tex-mml-chtml.js" not in note_pages[0].read_text(encoding="utf-8"):
+        failures.append("MathJax is not loaded on note pages")
 
     if failures:
         print("\n".join(failures), file=sys.stderr)
